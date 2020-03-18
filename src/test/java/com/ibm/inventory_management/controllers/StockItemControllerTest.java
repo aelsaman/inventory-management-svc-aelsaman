@@ -1,5 +1,6 @@
 package com.ibm.inventory_management.controllers;
 
+import com.ibm.inventory_management.services.StockItemApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -15,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("StockItemController")
 public class StockItemControllerTest {
   StockItemController controller;
-
+  StockItemApi service;
   MockMvc mockMvc;
 
   @BeforeEach
   public void setup() {
-    controller = spy(new StockItemController());
-
+    service = mock(StockItemApi.class);
+    controller = spy(new StockItemController(service));
     mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
   }
 
@@ -37,9 +39,9 @@ public class StockItemControllerTest {
     }
 
     @Test
-    @DisplayName("When called then it should return an empty array")
-    public void when_called_then_return_an_empty_array() throws Exception {
-
+    @DisplayName("When called then it should return an array")
+    public void when_called_then_return_an_array() throws Exception {
+      //      doReturn(new ArrayList<String>()).when(service).listStockItems();
       mockMvc
           .perform(get("/stock-items").accept("application/json"))
           .andExpect(content().json("[]"));

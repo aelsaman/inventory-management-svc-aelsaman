@@ -17,50 +17,51 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Component
 @EnableSwagger2
 public class SwaggerDocket {
-    @Autowired
-    private SwaggerConfig config;
+  @Autowired private SwaggerConfig config;
 
-    public SwaggerDocket() {
-        super();
+  public SwaggerDocket() {
+    super();
+  }
+
+  @Bean
+  public Docket api() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .select()
+        .apis(buildApiRequestHandler())
+        .paths(PathSelectors.regex(".*stock-item.*"))
+        .build()
+        .apiInfo(buildApiInfo());
+  }
+
+  protected Predicate<RequestHandler> buildApiRequestHandler() {
+    if (!StringUtils.isEmpty(config.getBaseApiPackage())) {
+      return buildBasePackageRequestHandler(config.getBaseApiPackage());
     }
 
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(buildApiRequestHandler())
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(buildApiInfo());
-    }
+    return RequestHandlerSelectors.any();
+  }
 
-    protected Predicate<RequestHandler> buildApiRequestHandler() {
-        if (!StringUtils.isEmpty(config.getBaseApiPackage())) {
-            return buildBasePackageRequestHandler(config.getBaseApiPackage());
-        }
+  protected Predicate<RequestHandler> buildBasePackageRequestHandler(final String baseApiPackage) {
+    return RequestHandlerSelectors.basePackage(baseApiPackage);
+  }
 
-        return RequestHandlerSelectors.any();
-    }
+  protected ApiInfo buildApiInfo() {
+    return new ApiInfo(
+        config.getTitle(),
+        config.getDescription(),
+        config.getVersion(),
+        config.getTermsOfServiceUrl(),
+        buildContact(),
+        config.getLicense(),
+        config.getLicenseUrl(),
+        config.getVendorExtensions());
+  }
 
-    protected Predicate<RequestHandler> buildBasePackageRequestHandler(final String baseApiPackage) {
-        return RequestHandlerSelectors.basePackage(baseApiPackage);
-    }
+  protected Contact buildContact() {
+    final SwaggerConfig.Contact contact = config.getContact();
 
-    protected ApiInfo buildApiInfo() {
-        return new ApiInfo(
-                config.getTitle(),
-                config.getDescription(),
-                config.getVersion(),
-                config.getTermsOfServiceUrl(),
-                buildContact(),
-                config.getLicense(),
-                config.getLicenseUrl(),
-                config.getVendorExtensions());
-    }
-
-    protected Contact buildContact() {
-        final SwaggerConfig.Contact contact = config.getContact();
-
-        return contact != null ? new Contact(contact.getName(), contact.getUrl(), contact.getEmail()) : null;
-    }
+    return contact != null
+        ? new Contact(contact.getName(), contact.getUrl(), contact.getEmail())
+        : null;
+  }
 }
