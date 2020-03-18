@@ -50,24 +50,24 @@ project.version = '1.0.0'
 // Configuration provided to nested scripts
 ext {
     config = [
-            jacoco: [
-                    limits: [
+            jacoco    : [
+                    limits  : [
                             'bundle': 0.2,
-                            'clazz': 0.0
+                            'clazz' : 0.0
                     ],
                     excludes: ['**/Application.class', '**/HelloUtil.class']
             ],
             testLogger: [
                     theme: 'mocha'
             ],
-            liberty: [
-                    appName: project.name,
-                    appWarFile: project.name + '-' + project.version + '.war',
-                    testServerHttpPort: 9080,
+            liberty   : [
+                    appName            : project.name,
+                    appWarFile         : project.name + '-' + project.version + '.war',
+                    testServerHttpPort : 9080,
                     testServerHttpsPort: 9443,
-                    warContext: project.name
+                    warContext         : project.name
             ],
-            pact: [
+            pact      : [
                     pactBrokerUrl: project.hasProperty('pactBrokerUrl') ? project.getProperty('pactBrokerUrl') : 'http://localhost'
             ]
     ]
@@ -77,34 +77,34 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // apply from:   'gradle/build-war.gradle'
-apply from:   'gradle/build-jar.gradle'
-apply from:   'gradle/build-springboot.gradle'
-apply from:   'gradle/build-junit5.gradle'
-apply from:   'gradle/build-testlogger.gradle'
-if (!project.hasProperty("skipCheckstyle")) {
-    println("No `skipCheckstyle` flag. Applying build script")
-    apply from: 'gradle/build-checkstyle.gradle'
-} else {
-    println("`skipCheckstyle` set. Will not apply build script")
-}
-apply from:   'gradle/build-jacoco.gradle'
-apply from:   'gradle/build-swagger.gradle'
-apply from:   'gradle/build-springactuator.gradle'
-apply from:   'gradle/build-springsleuth.gradle'
-apply from:   'gradle/build-githooks.gradle'
+apply from: 'gradle/build-jar.gradle'
+apply from: 'gradle/build-springboot.gradle'
+apply from: 'gradle/build-junit5.gradle'
+apply from: 'gradle/build-testlogger.gradle'
+//if (!project.hasProperty("skipCheckstyle")) {
+//    println("No `skipCheckstyle` flag. Applying build script")
+//    apply from: 'gradle/build-checkstyle.gradle'
+//} else {
+println("`skipCheckstyle` set. Will not apply build-checkstyle script")
+//}
+apply from: 'gradle/build-jacoco.gradle'
+apply from: 'gradle/build-swagger.gradle'
+apply from: 'gradle/build-springactuator.gradle'
+apply from: 'gradle/build-springsleuth.gradle'
+apply from: 'gradle/build-githooks.gradle'
 // apply from:   'gradle/build-liberty.gradle'
-apply from:   'gradle/build-pact-provider.gradle'
+apply from: 'gradle/build-pact-provider.gradle'
 
 apply plugin: "org.sonarqube"
 
-ext['junit-jupiter.version']   = '${junitVersion}'
+ext['junit-jupiter.version'] = '${junitVersion}'
 
 repositories {
     mavenCentral()
 }
 
 task copyJarToServerJar(type: Copy) {
-    from ('build/libs') {
+    from('build/libs') {
         rename "${project.name}-${project.version}.jar", 'server.jar'
     }
     into 'build/libs'
