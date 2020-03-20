@@ -144,17 +144,17 @@ spec:
                     ./gradlew testClasses --no-daemon
                 '''
             }
-            stage('Sonar scan') {
-                sh '''#!/bin/bash
-
-                if [[ -z "${SONARQUBE_URL}" ]]; then
-                  echo "Skipping Sonar Qube step as Sonar Qube not installed or configured"
-                  exit 0
-                fi
-
-                ./gradlew -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} sonarqube
-                '''
-            }
+//             stage('Sonar scan') {
+//                 sh '''#!/bin/bash
+//
+//                 if [[ -z "${SONARQUBE_URL}" ]]; then
+//                   echo "Skipping Sonar Qube step as Sonar Qube not installed or configured"
+//                   exit 0
+//                 fi
+//
+//                 ./gradlew -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} sonarqube
+//                 '''
+//             }
         }
         container(name: 'ibmcloud', shell: '/bin/bash') {
             stage('Build image') {
